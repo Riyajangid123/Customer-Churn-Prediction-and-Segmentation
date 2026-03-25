@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.so
+*.dll
+
+# Virtual environments
+customer_churn/Lib/
+customer_churn/Scripts/
+customer_churn/Include/
+venv/
+.env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings
+.vscode/
+
+# Logs
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python egg / wheel files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Ignore pip cache
+pip-log.txt
+pip-delete-this-directory.txt
