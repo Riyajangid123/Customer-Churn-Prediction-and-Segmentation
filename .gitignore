@@ -38,13 +38,10 @@ pip-delete-this-directory.txt
 
 _pycache__/
 *.pyc
-*.pkl
-*.joblib
 .env
 artifacts/
 
 # Model files (too large for GitHub)
-models/
 outputs/
 
 # Python cache
