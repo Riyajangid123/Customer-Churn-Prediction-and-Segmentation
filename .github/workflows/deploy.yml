@@ -1,0 +1,28 @@
+name: Deploy Customer Churn App
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v3
+
+      - name: Stop existing containers
+        run: docker compose down || true
+
+      - name: Build fresh images
+        run: docker compose build --no-cache
+
+      - name: Start containers
+        run: docker compose up -d
+
+      - name: Clean unused images
+        run: docker image prune -f
+
+      - name: Show running containers
+        run: docker ps
