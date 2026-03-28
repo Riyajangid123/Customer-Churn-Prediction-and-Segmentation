@@ -15,8 +15,14 @@ jobs:
       - name: Stop existing containers
         run: docker-compose down || true
 
-      - name: Build fresh images
-        run: docker-compose build
+      - name: Clean docker cache
+        run: docker system prune -f
+
+      - name: Build API image
+        run: docker-compose build api
+
+      - name: Build UI image
+        run: docker-compose build ui
 
       - name: Start containers
         run: docker-compose up -d
