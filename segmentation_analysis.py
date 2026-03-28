@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-data=pd.read_csv(r"C:\Users\DELL\OneDrive\Desktop\Customer_Churn_Prediction\outputs\segmentation_results.csv")
+data=pd.read_csv(r"C:\Users\DELL\OneDrive\Desktop\Customer_Churn_Prediction\Customer-Churn-Prediction-and-Segmentation\outputs\segmentation_results.csv")
 num_col=data.select_dtypes(exclude="object").columns
 summary=data.groupby("Segment")[num_col].mean()
 

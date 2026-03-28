@@ -35,3 +35,25 @@ build/
 # Ignore pip cache
 pip-log.txt
 pip-delete-this-directory.txt
+
+_pycache__/
+*.pyc
+*.pkl
+*.joblib
+.env
+artifacts/
+
+# Model files (too large for GitHub)
+models/
+outputs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Virtual environment
+customer_churn/
+venv/
+env/

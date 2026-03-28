@@ -7,7 +7,7 @@ st.title("Customer Intelligence System")
 st.write("Predict Customer Churn & Segment")
 st.markdown("---")
 
-# ========== INPUT FIELDS ==========
+
 customerID = st.text_input("Customer ID")
 
 gender = st.selectbox("Gender", ["Male", "Female"])
@@ -48,10 +48,9 @@ TotalCharges = st.number_input("Total Charges")
 
 st.markdown("---")
 
-# ========== BUTTON ==========
 if st.button("Analyze Customer"):
 
-    url = "http://127.0.0.1:8000/predict_full"
+    url = "http://churn_api:8000/predict_full"
 
     payload = {
         "customerID": customerID,
@@ -76,7 +75,7 @@ if st.button("Analyze Customer"):
         "TotalCharges": TotalCharges
     }
 
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json=payload,timeout=10)
 
     if response.status_code == 200:
         result = response.json()

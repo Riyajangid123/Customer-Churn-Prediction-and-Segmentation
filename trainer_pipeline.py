@@ -6,7 +6,7 @@ class TrainPipeline:
     def run_pipeline(self):
         ingestion=DataIngestion()
 
-        data=ingestion.ingest_data(r"C:\Users\DELL\OneDrive\Desktop\Customer_Churn_Prediction\data\WA_Fn-UseC_-Telco-Customer-Churn.csv")
+        data=ingestion.ingest_data(r"C:\Users\DELL\OneDrive\Desktop\Customer_Churn_Prediction\Customer-Churn-Prediction-and-Segmentation\data\WA_Fn-UseC_-Telco-Customer-Churn.csv")
 
         print("Data Ingestion done")
 
@@ -17,7 +17,7 @@ class TrainPipeline:
         print("Data Preprocessing done")
 
         trainer = ModelTrainer()
-        trainer.train_model(x, y, preprocessor)
+        trainer.TrainModel(x, y, preprocessor)
 
         print("Model Training done")
 

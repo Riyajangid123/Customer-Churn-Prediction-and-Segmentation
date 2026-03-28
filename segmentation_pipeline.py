@@ -7,7 +7,7 @@ class SegmentModel:
     def run_segment_model(self):
 
         ingestion = DataIngestion()
-        data = ingestion.ingest_data(r"C:\Users\DELL\OneDrive\Desktop\Customer_Churn_Prediction\data\WA_Fn-UseC_-Telco-Customer-Churn.csv")
+        data = ingestion.ingest_data(r"C:\Users\DELL\OneDrive\Desktop\Customer_Churn_Prediction\Customer-Churn-Prediction-and-Segmentation\data\WA_Fn-UseC_-Telco-Customer-Churn.csv")
 
         print("Data Ingestion Complete!")
 
