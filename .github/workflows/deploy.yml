@@ -116,19 +116,19 @@ jobs:
             done
 
             echo "==> Stopping old containers..."
-            docker-compose -f Docker-Compose.yml down --remove-orphans || true
+            docker-compose -f docker-compose.yml down --remove-orphans || true
 
             echo "==> Starting updated services..."
-            docker-compose -f Docker-Compose.yml up -d --force-recreate
+            docker-compose -f docker-compose.yml up -d --force-recreate
 
             echo "==> Container status (including crashed ones):"
             docker ps -a
 
             echo "==> API container logs:"
-            docker-compose -f Docker-Compose.yml logs --tail=30  churn_api
+            docker-compose -f docker-compose.yml logs --tail=30  churn_api
 
             echo "==> Frontend container logs:"
-            docker-compose -f Docker-Compose.yml logs --tail=30 churn_ui
+            docker-compose -f docker-compose.yml logs --tail=30 churn_ui
 
             echo "==> Waiting for containers to initialize..."
             sleep 20
@@ -151,7 +151,7 @@ jobs:
             done
 
             echo "==> Recent logs:"
-            docker-compose -f Docker-Compose.yml logs --tail=50
+            docker-compose -f docker-compose.yml logs --tail=50
 
             echo "==> Deployment finished successfully"
         env:
