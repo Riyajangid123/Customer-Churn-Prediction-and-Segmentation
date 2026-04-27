@@ -100,11 +100,11 @@ jobs:
         script: |
           set -eo pipefail
 
+          echo "==> Configuring Git safe directory..."
+          git config --global --add safe.directory /home/ubuntu/Customer-Churn-Prediction-and-Segmentation
+
           echo "==> Moving to project directory..."
           cd Customer-Churn-Prediction-and-Segmentation
-
-          echo "==> Fixing Git ownership..."
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/Customer-Churn-Prediction-and-Segmentation
 
           echo "==> Updating latest code..."
           git pull origin main
@@ -155,5 +155,4 @@ jobs:
 
           echo "==> Deployment finished successfully"
       env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_
