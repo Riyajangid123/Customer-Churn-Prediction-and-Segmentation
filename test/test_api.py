@@ -43,16 +43,16 @@ def test_predict_response_structure():
 
 
 def test_predict_segment_values():
-    response = client.post("/predict", json=sample_data)
-    assert response.json()["segment"] in ["Low Risk", "High Risk","Medium Risk"]
+    response = client.post("/predict_full", json=sample_data)
+    assert response.json()["segment"] in ["High Value", "Low Value", "At Risk"]
 
 
 def test_predict_missing_fields():
-    response = client.post("/predict", json={"TotalCharges": 1500.0})
+    response = client.post("/predict_full", json={"TotalCharges": 1500.0})
     assert response.status_code == 422
 
 
 def test_churn_probability_range():
-    response = client.post("/predict", json=sample_data)
+    response = client.post("/predict_full", json=sample_data)
     prob = response.json()["churn_prob"]
     assert 0.0 <= prob <= 1.0
