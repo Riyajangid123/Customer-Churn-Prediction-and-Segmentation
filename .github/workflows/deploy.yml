@@ -99,9 +99,10 @@ jobs:
           envs: DOCKER_USERNAME,DOCKER_PASSWORD      
           script: |
             set -eo pipefail
-            
-            echo "==> Configuring Git safe directory..."
-            git config --global --add safe.directory /home/ubuntu/Customer-Churn-Prediction-and-Segmentation
+
+            echo "==> Fixing permissions..."
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/Customer-Churn-Prediction-and-Segmentation || true
+            chmod -R u+rwX /home/ubuntu/Customer-Churn-Prediction-and-Segmentation || true
 
             echo "==> Moving to project directory..."
             cd Customer-Churn-Prediction-and-Segmentation
