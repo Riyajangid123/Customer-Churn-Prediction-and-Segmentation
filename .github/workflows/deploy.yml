@@ -109,6 +109,9 @@ jobs:
             echo "==> Logging into DockerHub..."
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
+            echo "==> Configuring Git safe directory..."
+            git config --global --add safe.directory /home/ubuntu/Customer-Churn-Prediction-and-Segmentation
+
             echo "==> Pre-pulling latest Docker images..."
             docker-compose -f docker-compose.yml pull
             
