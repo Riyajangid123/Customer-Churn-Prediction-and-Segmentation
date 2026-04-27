@@ -59,9 +59,9 @@ jobs:
           context: .
           file: Dockerfile.api
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:cache,mode=max
+          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-api:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-api:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-api:cache,mode=max
 
       - name: Build and Push Frontend image
         uses: docker/build-push-action@v4
@@ -70,16 +70,16 @@ jobs:
           file: Dockerfile.frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/fraud-detection-frontend:cache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:cache,mode=max
 
     
       - name: Verify images pushed successfully
         run: |
           echo "Verifying API image..."
-          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:latest --quiet
+          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-api:latest --quiet
           echo "Verifying Frontend image..."
-          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest --quiet
+          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:latest --quiet
           echo "Both images verified successfully"
 
   deploy:
@@ -109,8 +109,8 @@ jobs:
             echo "==> Pre-pulling latest Docker images (before downtime)..."
             RETRY=3
             for i in $(seq 1 $RETRY); do
-              docker pull $DOCKER_USERNAME/fraud-detection-api:latest && \
-              docker pull $DOCKER_USERNAME/fraud-detection-frontend:latest && break
+              docker pull $DOCKER_USERNAME/customer-churn-prediction-and-segmentation-api:latest && \
+              docker pull $DOCKER_USERNAME/customer-churn-prediction-and-segmentation-frontend:latest && break
               echo "Pull attempt $i failed, retrying in 10s..."
               sleep 10
             done

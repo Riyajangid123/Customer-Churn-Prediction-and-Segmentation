@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.api
     container_name: churn_api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     restart: always
     networks:
       - churn_network
@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile.streamlit
     container_name: churn_ui
     ports:
-      - "8501:8501"
+      - "8503:8501"
     depends_on:
       - api
     restart: always
