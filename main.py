@@ -32,8 +32,9 @@ def predict_full(data: CustomerChurn):
         1: "Low Value",
         2: "At Risk"
     }
-
+    proba = model.predict_proba(input_data)[0][1]
     return {
         "churn": "Yes" if churn_pred == 1 else "No",
+        "churn_prob":float(proba),
         "segment": segment_map[segment]
     }

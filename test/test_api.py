@@ -30,11 +30,11 @@ sample_data = {
 def test_home():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Welcome to Churn Prediction and Segmentation System"}
+    assert response.json() == {"message": "Churn Prediction API running"}
 
 
 def test_predict_response_structure():
-    response = client.post("/predict", json=sample_data)
+    response = client.post("/predict_full", json=sample_data)
     assert response.status_code == 200
     json_data = response.json()
 
