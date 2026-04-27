@@ -69,7 +69,7 @@ jobs:
           context: .
           file: Dockerfile.streamlit
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-ui:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:cache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:cache,mode=max
 
@@ -103,18 +103,15 @@ jobs:
             echo "==> Moving to project directory..."
             cd Customer-Churn-Prediction-and-Segmentation
 
+            echo "==> Updating latest code..."
+            git pull origin main
+
             echo "==> Logging into DockerHub..."
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-            echo "==> Pre-pulling latest Docker images (before downtime)..."
-            RETRY=3
-            for i in $(seq 1 $RETRY); do
-              docker pull $DOCKER_USERNAME/customer-churn-prediction-api:latest && \
-              docker pull $DOCKER_USERNAME/customer-churn-prediction-frontend:latest && break
-              echo "Pull attempt $i failed, retrying in 10s..."
-              sleep 10
-            done
-
+            echo "==> Pre-pulling latest Docker images..."
+            docker-compose -f docker-compose.yml pull
+            
             echo "==> Stopping old containers..."
             docker-compose -f docker-compose.yml down --remove-orphans || true
 

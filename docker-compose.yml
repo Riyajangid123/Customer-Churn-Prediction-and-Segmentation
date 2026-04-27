@@ -1,8 +1,8 @@
+version: "3.8"
+
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
+    image: riya7737/customer-churn-prediction-api:latest
     container_name: churn_api
     ports:
       - "8001:8000"
@@ -11,9 +11,7 @@ services:
       - churn_network
 
   ui:
-    build:
-      context: .
-      dockerfile: Dockerfile.streamlit
+    image: riya7737/customer-churn-prediction-frontend:latest
     container_name: churn_ui
     ports:
       - "8503:8501"
@@ -22,8 +20,7 @@ services:
     restart: always
     networks:
       - churn_network
-      
+
 networks:
   churn_network:
     driver: bridge
-    
