@@ -83,77 +83,77 @@ jobs:
           echo "Both images verified successfully"
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  runs-on: ubuntu-latest
+  needs: build
+  
+  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-    steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          command_timeout: 25m
-          envs: DOCKER_USERNAME,DOCKER_PASSWORD      
-          script: |
-            set -eo pipefail
+  steps:
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        command_timeout: 25m
+        envs: DOCKER_USERNAME,DOCKER_PASSWORD      
+        script: |
+          set -eo pipefail
 
-            echo "==> Moving to project directory..."
-            cd Customer-Churn-Prediction-and-Segmentation
+          echo "==> Moving to project directory..."
+          cd Customer-Churn-Prediction-and-Segmentation
 
-            echo "==> Updating latest code..."
-            git pull origin main
+          echo "==> Fixing Git ownership..."
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/Customer-Churn-Prediction-and-Segmentation
 
-            echo "==> Logging into DockerHub..."
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          echo "==> Updating latest code..."
+          git pull origin main
 
-            echo "==> Configuring Git safe directory..."
-            git config --global --add safe.directory /home/ubuntu/Customer-Churn-Prediction-and-Segmentation
+          echo "==> Logging into DockerHub..."
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-            echo "==> Pre-pulling latest Docker images..."
-            docker-compose -f docker-compose.yml pull
-            
-            echo "==> Stopping old containers..."
-            docker-compose -f docker-compose.yml down --remove-orphans || true
+          echo "==> Pre-pulling latest Docker images..."
+          docker-compose -f docker-compose.yml pull
+          
+          echo "==> Stopping old containers..."
+          docker-compose -f docker-compose.yml down --remove-orphans || true
 
-            echo "==> Starting updated services..."
-            docker-compose -f docker-compose.yml up -d --force-recreate
+          echo "==> Starting updated services..."
+          docker-compose -f docker-compose.yml up -d --force-recreate
 
-            echo "==> Container status (including crashed ones):"
-            docker ps -a
+          echo "==> Container status (including crashed ones):"
+          docker ps -a
 
-            echo "==> API container logs:"
-            docker-compose -f docker-compose.yml logs --tail=30  api
+          echo "==> API container logs:"
+          docker-compose -f docker-compose.yml logs --tail=30  api
 
-            echo "==> Frontend container logs:"
-            docker-compose -f docker-compose.yml logs --tail=30 ui
+          echo "==> Frontend container logs:"
+          docker-compose -f docker-compose.yml logs --tail=30 ui
 
-            echo "==> Waiting for containers to initialize..."
-            sleep 20
+          echo "==> Waiting for containers to initialize..."
+          sleep 20
 
-            echo "==> Container status:"
-            docker ps
+          echo "==> Container status:"
+          docker ps
 
-            echo "==> Health check — API..."
-            for i in 1 2 3 4 5; do
-              curl -sf --max-time 5 http://localhost:8001/ >/dev/null \
-                && echo "API OK" && break \
-                || echo "API not ready (attempt $i), retrying in 5s..." && sleep 5
-            done
+          echo "==> Health check — API..."
+          for i in 1 2 3 4 5; do
+            curl -sf --max-time 5 http://localhost:8001/ >/dev/null \
+              && echo "API OK" && break \
+              || echo "API not ready (attempt $i), retrying in 5s..." && sleep 5
+          done
 
-            echo "==> Health check — Frontend..."
-            for i in 1 2 3 4 5; do
-              curl -sf --max-time 5 http://localhost:8503/ >/dev/null \
-                && echo "FRONTEND OK" && break \
-                || echo "Frontend not ready (attempt $i), retrying in 5s..." && sleep 5
-            done
+          echo "==> Health check — Frontend..."
+          for i in 1 2 3 4 5; do
+            curl -sf --max-time 5 http://localhost:8503/ >/dev/null \
+              && echo "FRONTEND OK" && break \
+              || echo "Frontend not ready (attempt $i), retrying in 5s..." && sleep 5
+          done
 
-            echo "==> Recent logs:"
-            docker-compose -f docker-compose.yml logs --tail=50
+          echo "==> Recent logs:"
+          docker-compose -f docker-compose.yml logs --tail=50
 
-            echo "==> Deployment finished successfully"
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          echo "==> Deployment finished successfully"
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
