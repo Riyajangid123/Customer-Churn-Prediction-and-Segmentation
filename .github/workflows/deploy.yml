@@ -69,9 +69,9 @@ jobs:
           context: .
           file: Dockerfile.streamlit
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:cache,mode=max
+          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-ui:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-ui:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-ui:cache,mode=max
 
     
       - name: Verify images pushed successfully
@@ -79,7 +79,7 @@ jobs:
           echo "Verifying API image..."
           docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-api:latest --quiet
           echo "Verifying Frontend image..."
-          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:latest --quiet
+          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-ui:latest --quiet
           echo "Both images verified successfully"
 
   deploy:
@@ -110,7 +110,7 @@ jobs:
             RETRY=3
             for i in $(seq 1 $RETRY); do
               docker pull $DOCKER_USERNAME/customer-churn-prediction-and-segmentation-api:latest && \
-              docker pull $DOCKER_USERNAME/customer-churn-prediction-and-segmentation-frontend:latest && break
+              docker pull $DOCKER_USERNAME/customer-churn-prediction-and-segmentation-ui:latest && break
               echo "Pull attempt $i failed, retrying in 10s..."
               sleep 10
             done
