@@ -67,7 +67,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: Dockerfile.frontend
+          file: Dockerfile.streamlit
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-and-segmentation-frontend:cache
