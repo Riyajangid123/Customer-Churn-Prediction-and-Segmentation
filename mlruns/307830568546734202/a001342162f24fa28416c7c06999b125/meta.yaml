@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/OneDrive/Desktop/Customer_Churn_Prediction/Customer-Churn-Prediction-and-Segmentation/mlruns/307830568546734202/a001342162f24fa28416c7c06999b125/artifacts
+end_time: 1775885450632
+entry_point_name: ''
+experiment_id: '307830568546734202'
+lifecycle_stage: active
+run_id: a001342162f24fa28416c7c06999b125
+run_name: merciful-conch-575
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1775885388230
+status: 3
+tags: []
+user_id: DELL

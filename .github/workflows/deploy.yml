@@ -1,34 +1,159 @@
-name: Deploy Customer Churn App
+name: Customer Churn Prediction and Segmentation CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
-    runs-on: self-hosted
+  test:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout latest code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Stop existing containers
-        run: docker-compose down || true
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-      - name: Clean docker cache
-        run: docker system prune -f
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-      - name: Build API image
-        run: docker-compose build api
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Build UI image
-        run: docker-compose build ui
+      - name: Run tests
+        run: |
+          python -m pytest test/test_api.py -v
 
-      - name: Start containers
-        run: docker-compose up -d
+  build:
+    runs-on: ubuntu-latest
+    needs: test
 
-      - name: Clean unused images
-        run: docker image prune -f
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Show running containers
-        run: docker ps
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push API image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile.api
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:cache,mode=max
+
+      - name: Build and Push Frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile.frontend
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/fraud-detection-frontend:cache,mode=max
+
+    
+      - name: Verify images pushed successfully
+        run: |
+          echo "Verifying API image..."
+          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-api:latest --quiet
+          echo "Verifying Frontend image..."
+          docker pull ${{ secrets.DOCKER_USERNAME }}/customer-churn-prediction-frontend:latest --quiet
+          echo "Both images verified successfully"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 25m
+          envs: DOCKER_USERNAME,DOCKER_PASSWORD      
+          script: |
+            set -eo pipefail
+
+            echo "==> Moving to project directory..."
+            cd Customer-Churn-Prediction-and-Segmentation
+
+            echo "==> Logging into DockerHub..."
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+            echo "==> Pre-pulling latest Docker images (before downtime)..."
+            RETRY=3
+            for i in $(seq 1 $RETRY); do
+              docker pull $DOCKER_USERNAME/fraud-detection-api:latest && \
+              docker pull $DOCKER_USERNAME/fraud-detection-frontend:latest && break
+              echo "Pull attempt $i failed, retrying in 10s..."
+              sleep 10
+            done
+
+            echo "==> Stopping old containers..."
+            docker-compose -f Docker-Compose.yml down --remove-orphans || true
+
+            echo "==> Starting updated services..."
+            docker-compose -f Docker-Compose.yml up -d --force-recreate
+
+            echo "==> Container status (including crashed ones):"
+            docker ps -a
+
+            echo "==> API container logs:"
+            docker-compose -f Docker-Compose.yml logs --tail=30  churn_api
+
+            echo "==> Frontend container logs:"
+            docker-compose -f Docker-Compose.yml logs --tail=30 churn_ui
+
+            echo "==> Waiting for containers to initialize..."
+            sleep 20
+
+            echo "==> Container status:"
+            docker ps
+
+            echo "==> Health check — API..."
+            for i in 1 2 3 4 5; do
+              curl -sf --max-time 5 http://localhost:8000/ >/dev/null \
+                && echo "API OK" && break \
+                || echo "API not ready (attempt $i), retrying in 5s..." && sleep 5
+            done
+
+            echo "==> Health check — Frontend..."
+            for i in 1 2 3 4 5; do
+              curl -sf --max-time 5 http://localhost:8501/ >/dev/null \
+                && echo "FRONTEND OK" && break \
+                || echo "Frontend not ready (attempt $i), retrying in 5s..." && sleep 5
+            done
+
+            echo "==> Recent logs:"
+            docker-compose -f Docker-Compose.yml logs --tail=50
+
+            echo "==> Deployment finished successfully"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

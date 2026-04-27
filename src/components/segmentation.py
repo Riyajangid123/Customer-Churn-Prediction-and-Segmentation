@@ -9,7 +9,7 @@ from src.components.DataPreprocessing import DataPreprocessing
 class ModelCluster():
     def model_segment(self,data,preprocessor,model_pipeline):
         data["TotalCharges"]=pd.to_numeric(data["TotalCharges"],errors="coerce")
-        X_raw = data.drop(columns=["Churn"], errors='ignore')  # raw features
+        X_raw = data.drop(columns=["Churn"], errors='ignore')  
         
         X_numeric_for_kmeans = preprocessor.transform(X_raw)
         kmeans=KMeans(n_clusters=3,random_state=42)

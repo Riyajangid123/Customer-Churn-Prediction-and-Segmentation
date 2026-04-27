@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/OneDrive/Desktop/Customer_Churn_Prediction/Customer-Churn-Prediction-and-Segmentation/mlruns/307830568546734202/15e6d296181645b7a8e95cc19399942e/artifacts
+end_time: 1775883249560
+entry_point_name: ''
+experiment_id: '307830568546734202'
+lifecycle_stage: active
+run_id: 15e6d296181645b7a8e95cc19399942e
+run_name: likeable-auk-412
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1775883248657
+status: 3
+tags: []
+user_id: DELL

@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/DELL/OneDrive/Desktop/Customer_Churn_Prediction/Customer-Churn-Prediction-and-Segmentation/mlruns/307830568546734202/models/m-5992b1c3d08d4b40bd2b6bb7d9bb999c/artifacts
+creation_timestamp: 1775885430421
+experiment_id: '307830568546734202'
+last_updated_timestamp: 1775885450578
+model_id: m-5992b1c3d08d4b40bd2b6bb7d9bb999c
+model_type: null
+name: model
+source_run_id: a001342162f24fa28416c7c06999b125
+status: 2
+status_message: null

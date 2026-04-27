@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/OneDrive/Desktop/Customer_Churn_Prediction/Customer-Churn-Prediction-and-Segmentation/mlruns/307830568546734202/0a59b3cc7fe24ec79d5ed7d3744fd627/artifacts
+end_time: 1775884999835
+entry_point_name: ''
+experiment_id: '307830568546734202'
+lifecycle_stage: active
+run_id: 0a59b3cc7fe24ec79d5ed7d3744fd627
+run_name: adaptable-worm-210
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1775884961228
+status: 4
+tags: []
+user_id: DELL

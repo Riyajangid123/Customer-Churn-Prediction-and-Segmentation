@@ -22,6 +22,5 @@ class DataPreprocessing:
         
         preprocessor=ColumnTransformer([("num",num_pipeline,num_cols),
                                         ("cat",cat_pipeline,cat_cols)])
-        preprocessor._estimator_type = "transformer"
         
         return x,y,preprocessor

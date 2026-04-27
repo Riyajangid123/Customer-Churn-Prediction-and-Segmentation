@@ -26,3 +26,4 @@ services:
 networks:
   churn_network:
     driver: bridge
+    
