@@ -138,14 +138,14 @@ jobs:
 
             echo "==> Health check — API..."
             for i in 1 2 3 4 5; do
-              curl -sf --max-time 5 http://localhost:8000/ >/dev/null \
+              curl -sf --max-time 5 http://localhost:8001/ >/dev/null \
                 && echo "API OK" && break \
                 || echo "API not ready (attempt $i), retrying in 5s..." && sleep 5
             done
 
             echo "==> Health check — Frontend..."
             for i in 1 2 3 4 5; do
-              curl -sf --max-time 5 http://localhost:8501/ >/dev/null \
+              curl -sf --max-time 5 http://localhost:8503/ >/dev/null \
                 && echo "FRONTEND OK" && break \
                 || echo "Frontend not ready (attempt $i), retrying in 5s..." && sleep 5
             done
